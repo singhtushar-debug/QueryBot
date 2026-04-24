@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { MessageBubble } from "./MessageBubble";
 import { UrlingestForm } from "./UrlingestForm";
+import { PdfUpload } from "./PdfUpload";
 
 const API_BASE_CHAT = "http://localhost:8000/api";
 
@@ -84,6 +85,9 @@ export const ChatWindow = () => {
 
       {/* URL Ingest */}
       <UrlingestForm onSuccess={handleUrlSuccess} />
+
+      {/* PDF Ingest*/}
+      <PdfUpload onSuccess={handleUrlSuccess} />
     </div>
   );
 };

@@ -22,7 +22,7 @@ def ingest(data: IngestRequest,vs = Depends(get_vs)):
 
 @router.post("/pdf")
 def ingest_pdf_endpoint(file: UploadFile = File(...), vs = Depends(get_vs)):
-    print(type(file))
+    # print(type(file))
     file_path = os.path.join(UPLOAD_DIR,file.filename)
 
     with open(file_path, 'wb') as f:

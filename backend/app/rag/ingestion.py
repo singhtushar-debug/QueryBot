@@ -12,7 +12,7 @@ def ingest_url(url,vectorstore):
 def ingest_pdf(file_path,vectorstore):
     loader = PyPDFLoader(file_path)
     docs = loader.load()
-
+    # print(docs)
     process_docs(docs,vectorstore)
 
 
