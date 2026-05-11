@@ -22,13 +22,13 @@ export const ChatWindow = () => {
     setLoading(true);
 
     try {
-      const { data } = await axios.post(`${API_BASE_CHAT}/query/`, {
-        question: input,
+      const { data } = await axios.post(`${API_BASE_CHAT}/chat/`, {
+        message: input,
       });
 
       setMessages((prev) => [
         ...prev,
-        { text: data?.answer || "No response", isUser: false },
+        { text: data?.response || "No response", isUser: false },
       ]);
     } catch (err) {
       setMessages((prev) => [
@@ -43,9 +43,9 @@ export const ChatWindow = () => {
     }
   };
 
-  const handleUrlSuccess = (msg) => {
-    setMessages((prev) => [...prev, { text: msg, isUser: false }]);
-  };
+  // const handleUrlSuccess = (msg) => {
+  //   setMessages((prev) => [...prev, { text: msg, isUser: false }]);
+  // };
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
@@ -84,10 +84,10 @@ export const ChatWindow = () => {
       </div>
 
       {/* URL Ingest */}
-      <UrlingestForm onSuccess={handleUrlSuccess} />
+      {/* <UrlingestForm onSuccess={handleUrlSuccess} /> */}
 
       {/* PDF Ingest*/}
-      <PdfUpload onSuccess={handleUrlSuccess} />
+      {/* <PdfUpload onSuccess={handleUrlSuccess} /> */}
     </div>
   );
 };

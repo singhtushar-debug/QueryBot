@@ -1,10 +1,12 @@
 import requests
+category = "electronics"
 
-url = "https://fakestoreapi.com/products/8"
+url = f"https://fakestoreapi.com/products/category/{category}"
 response = requests.get(url)
 data = response.json()
-print(data)
+# print(data)
 
-# for item in data['data']:
-#     print(item['name'])
+
+for item in data:
+    print(item['title'])
     

@@ -36,6 +36,7 @@ def build_graph():
     return graph.compile()
 
 app = build_graph()
-# res = app.invoke({"user_query": "Search for jewelry"})
+
+# res = app.invoke({"user_query": "Search for a SSD"})
 
 # print(res['final_response'])

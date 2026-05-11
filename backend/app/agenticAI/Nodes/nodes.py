@@ -22,7 +22,7 @@ Analyze the user's message and extract:
 1. **intent_type**: One of: search, compare, knowledge, cart_add, cart_view, recommend, general
 2. **query**: A cleaned version of the user's request
 3. **entities**: A JSON object with any of these optional fields:
-   - category: product category (electronics, jewelery, men's clothing, women's clothing)
+   - category: product category (electronics (if user ask about any electornics product), jewelery (if user ask for any jewelery related query), men's clothing, women's clothing)
    - min_price: minimum price (number)
    - max_price: maximum price (number)
    - product_ids: list of product IDs mentioned
@@ -37,6 +37,8 @@ Intent definitions:
 - **cart_view**: User wants to see their cart (e.g., "show my cart", "what's in my basket")
 - **recommend**: User wants personalized recommendations (e.g., "what do you recommend for a gift", "best bang for the buck")
 - **general**: Greetings, thanks, or unrelated queries
+
+Return result strictly in json format and strictly follow the format instructoins :
      
 {format_instructions}
      
@@ -59,7 +61,7 @@ def extract_intent(state: AgentState):
         "format_instructions":parser.get_format_instructions()
         })
 
-    # print(response)
+    print(response)
     # print(type(response))
     return {
         "intent": response,
@@ -171,14 +173,14 @@ def recommend_node(state:AgentState):
     llm = get_llm()
 
     products_info = "\n".join(
-        f"- {p.title} | ${p.rating.rate} | *{p.rating.rate} | {p.rating.count} reviews"
+        f"- {p.title} | ${p.price } | {p.description} | *{p.rating.rate} | {p.rating.count} reviews"
         for p in products
     )
 
     messages = [
         SystemMessage(
             content = (
-                "You are a helpful shopping recommendation assistant.Based on the user's need and the product data"
+                "You are a helpful shopping recommendation assistant.Based on the user's need and the available products data"
                 "provide concise, perosnalized recommendation. Explain why you recommend each product.\n"
                 f"Available products:\n {products_info}"
                 f"Scoring data: \n {json.dumps(rank)}"
@@ -193,7 +195,7 @@ def recommend_node(state:AgentState):
     agent_output = json.dumps(
         {
             "action":"recommend",
-            "recommendations":rank,
+            "product recommendations":rank,
             "narrative": res.content,
         }
     )
@@ -247,6 +249,7 @@ output and create a polished, user-friendly response.
 
 Guidelines:
 - Be conversational and helpful
+- Dont add products or information about any product from your own knowldege ,provide response solely based on the products infor provided to you.
 - If products are involved, highlight key details (name, price, rating)
 - If comparisons were made, present them clearly with trade-offs
 - If recommendations are given, explain the reasoning
@@ -263,13 +266,14 @@ def synthesize_response(state: AgentState):
     user_query = state.get("user_query","")
 
     llm = get_llm()
-
+    print(len(state.get('products',[])))
     messages = [
         SystemMessage(content = RESPONSE_SYNTHESIS_PROMPT),
         HumanMessage(
             content = (
                 f"User asked: {user_query} \n\n"
                 f"Agent output:\n {agent_output}\n\n"
+                f"Available products:\n {state.get('products',[])}"
                 f"Reasoning: {reasoning}\n\n"
                 f"Create a polished, helpful response for the user."
             )
