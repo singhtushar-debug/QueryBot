@@ -22,5 +22,5 @@ Question:
 
 Answer:
 """,
-    input_variables=["context", "question"]
+    input_variables=["context", "question"],
 )

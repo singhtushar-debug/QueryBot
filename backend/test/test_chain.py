@@ -4,8 +4,9 @@ from app.vectorstore.chroma import get_vectorstore
 
 vectorstore = get_vectorstore()
 
-def query_process(url,query):
-    ingest_url(url,vectorstore)
+
+def query_process(url, query):
+    ingest_url(url, vectorstore)
 
     chain = get_chain()
 
@@ -14,4 +15,9 @@ def query_process(url,query):
     return response
 
 
-print(query_process(url = 'https://www.geeksforgeeks.org/machine-learning/machine-learning/',query = 'What is  machine learning?'))
+print(
+    query_process(
+        url="https://www.geeksforgeeks.org/machine-learning/machine-learning/",
+        query="What is  machine learning?",
+    )
+)

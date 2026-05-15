@@ -1,4 +1,8 @@
-from langchain_core.runnables  import RunnableParallel,RunnablePassthrough,RunnableLambda
+from langchain_core.runnables import (
+    RunnableParallel,
+    RunnablePassthrough,
+    RunnableLambda,
+)
 from langchain_core.output_parsers import StrOutputParser
 from app.rag.prompts import prompt
 from app.llm.huggingface import get_llm
@@ -17,13 +21,16 @@ def format_docs(retrieved_docs):
     return context
 
 
-parallel_chain = RunnableParallel({
-    'context': retriever | RunnableLambda(format_docs),
-    'question': RunnablePassthrough()
-})
+parallel_chain = RunnableParallel(
+    {
+        "context": retriever | RunnableLambda(format_docs),
+        "question": RunnablePassthrough(),
+    }
+)
 
 
 main_chain = parallel_chain | prompt | llm | parser
+
 
 def get_chain():
     return main_chain
