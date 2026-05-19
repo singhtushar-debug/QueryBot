@@ -9,30 +9,59 @@ from app.agenticAI.agents.agents import product_agent, general_agent, cart_agent
 
 # wrapping specialized sub-agents as a tool
 @tool
-def product_agent_tool(state: Annotated[dict, InjectedState]):
-    """Handle product related queries."""
+async def product_agent_tool(query:str,state: Annotated[dict, InjectedState]):
+    """
+        Handle product related queries.
+
+        Args:
+            query: original user query (must be a string).
+    """
     print("product agent working...")
 
-    response = product_agent.invoke({"messages": state["messages"]})
+    response = await product_agent.ainvoke({
+        "query": query,
+        "messages": state["messages"]
+        })
 
     return response["messages"][-1].content
 
 
 @tool
-def cart_agent_tool(state: Annotated[dict, InjectedState]):
-    """Handle user cart related queries."""
+async def cart_agent_tool(query: str,state: Annotated[dict,InjectedState],product_id: int | None = None,quantity: int = 1):
+    """
+        Handle user cart related queries.
+
+        Args:
+            query: original user query (must be a string).
+            product_id: product id (must be an integer).
+            quantity: quantity to add (must be an integer).
+    """
     print("cart agent working....")
 
-    response = cart_agent.invoke({"messages": state["messages"]})
+    response = await cart_agent.ainvoke({
+        "query": query,
+        "product_id": product_id,
+        "quantity": quantity,
+        "messages": state['messages']
+        })
 
     return response["messages"][-1].content
 
 
 @tool
-def general_agent_tool(state: Annotated[dict, InjectedState]):
-    """Handle general chat."""
-    response = general_agent.invoke({"messages": state["messages"]})
-    print("general")
+async def general_agent_tool(query: str,state: Annotated[dict, InjectedState]):
+    """
+        Handle general chat.
+
+        Args:
+            query: original user query (must be a string).
+    """
+    print("general agent working...")
+    response = await general_agent.ainvoke({
+        "query": query,
+        "messages": state["messages"]
+        })
+    
     return response["messages"][-1].content
 
 
@@ -46,25 +75,20 @@ system_prompt = """
         - general_agent_tool: Call this tool for general greetings or questions. \n
         
         GUIDELINES:
-        Don't answer from the conversational history alone,call the appropriate tools see the tools response and then provide the final reponse.
-        
-        Final Response:
-        - Once you think the user's query can be satisfied by the data provided by the tools.
-         Generate a conversational response for the user.
-
-
+        1.Important: Always extract product_ids of each product  (that is used to pass to other agents)
+        2.Important: Don't answer from the conversational history alone,call the appropriate tools see the tools response and then provide the final reponse.
     """
 supervisor_tools = [product_agent_tool, general_agent_tool, cart_agent_tool]
 
 
-def supervisor_node(state: AgentState):
+async def supervisor_node(state: AgentState):
     llm = get_llm()
 
     messages = [SystemMessage(content=system_prompt)] + state["messages"]
 
     llm_with_tools = llm.bind_tools(supervisor_tools)
 
-    response = llm_with_tools.invoke(messages)
     print("supervisor node working...")
-    return {"messages": [response], "final_response": response.content}
-
+    response = await llm_with_tools.ainvoke(messages)
+    
+    return {"messages": [response], "final_response": f"from supervisor: {response.content}"}

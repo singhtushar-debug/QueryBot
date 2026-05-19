@@ -3,7 +3,7 @@ from app.agenticAI.schema.schema import AgentState
 from langgraph.prebuilt import ToolNode
 from app.agenticAI.nodes.nodes import supervisor_node, supervisor_tools
 from langgraph.checkpoint.memory import InMemorySaver
-
+# import asyncio
 
 checkpointer = InMemorySaver()
 
@@ -38,24 +38,4 @@ def build_graph():
 
 app = build_graph()
 
-# Testing the complete flow
 
-# config = {"configurable": {"thread_id": "1"}}
-# while True:
-#     user_input = input("User: ")
-#     if user_input in ["exit", "end"]:
-#         break
-#     else:
-#         for event in app.stream(
-#             {"messages": [{"role": "user", "content": user_input}]}, config=config
-#         ):
-#             for key, value in event.items():
-#                 if value is None:
-#                     continue
-#                 last_msg = (
-#                     value.get("messages", [])[-1] if "messages" in value else None
-#                 )
-#                 if last_msg:
-#                     print(f"Output from node: {key}")
-#                     print(last_msg)
-#                     print("*************************************")

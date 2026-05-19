@@ -5,6 +5,13 @@ import os
 
 load_dotenv()
 api_key = os.getenv("GROQ_API_KEY")
+
+def get_llm():
+    llm = ChatGroq(groq_api_key=api_key, model="qwen/qwen3-32b",streaming=True)
+    return llm
+
+
+
 # api_key = os.getenv('HUGGINGFACEHUB_API_KEY')
 
 # def get_llm():
@@ -18,7 +25,3 @@ api_key = os.getenv("GROQ_API_KEY")
 #     llm = ChatHuggingFace(llm = model)
 #     return llm
 
-
-def get_llm():
-    llm = ChatGroq(groq_api_key=api_key, model="qwen/qwen3-32b")
-    return llm

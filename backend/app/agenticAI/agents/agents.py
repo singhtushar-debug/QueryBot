@@ -26,10 +26,11 @@ product_agent = create_agent(
 
         GUIDELINES:
         1. Available categories: electronics, jewelery, men's clothing, women's clothing.
-        2. ALWAYS use the search_products tool to find items.
-        3. ALWAYS add the product_id in the response with each products,it is required.\n
+        2. ONLY return structured output of the tools.
         3. If you aren't sure about a category, use fetch_categories first.
         4. IMPORTANT: Do not explain your steps. Call the tool immediately.
+        5. IMPORTANT: Do not try to be conversational.Return the structured tool result.
+        6. IMPORTANT: Include product_id in your response for each product.
         
     """,
 )
@@ -50,7 +51,9 @@ cart_agent = create_agent(
 
         GUIDELINES:
         1. IMPORTANT: Do not explain your steps. Call the tool immediately.
-        2. IMPORTANT: Send the important information in the response including product_id for each product.
+        2. IMPORTANT: ONLY Return structured tool output.
+        3. IMPORTANT: Must include product_id in your response for each product.
+        3. Do not give conversational response.
     """,
 )
 
